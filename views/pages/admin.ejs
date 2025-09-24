@@ -1,0 +1,36 @@
+<h4>🛠 Admin</h4>
+<div class="row g-3 mb-3">
+  <div class="col-md-3"><div class="card p-3 text-center"><small>Total Users</small><h3 id="aUsers">0</h3></div></div>
+  <div class="col-md-3"><div class="card p-3 text-center"><small>Total Jadwal</small><h3 id="aSchedules">0</h3></div></div>
+  <div class="col-md-2"><div class="card p-3 text-center"><small>Running</small><h3 id="aRunning">0</h3></div></div>
+  <div class="col-md-2"><div class="card p-3 text-center"><small>Finished</small><h3 id="aFinished">0</h3></div></div>
+  <div class="col-md-2"><div class="card p-3 text-center"><small>Failed</small><h3 id="aFailed">0</h3></div></div>
+</div>
+
+<div class="card p-3">
+  <h6>Users</h6>
+  <div class="table-responsive">
+    <table class="table" id="tblUsers"><thead><tr><th>Nama</th><th>Email</th><th>Role</th><th>Aksi</th></tr></thead><tbody></tbody></table>
+  </div>
+</div>
+<script>
+async function loadStats(){
+  const r=await fetch("/api/admin/stats",{credentials:"include"}); const j=await r.json();
+  if(j.success){aUsers.textContent=j.data.totalUsers;aSchedules.textContent=j.data.totalSchedules;aRunning.textContent=j.data.running;aFinished.textContent=j.data.finished;aFailed.textContent=j.data.failed;}
+}
+async function loadUsers(){
+  const r=await fetch("/api/admin/users",{credentials:"include"}); const j=await r.json(); if(!j.success) return;
+  const tbody=document.querySelector("#tblUsers tbody"); tbody.innerHTML="";
+  j.data.forEach(u=>{
+    tbody.innerHTML+=`<tr><td>${u.name}</td><td>${u.email}</td><td>${u.role}</td>
+    <td><button class="btn btn-sm btn-outline-primary" onclick="setRole(${u.id},'admin')">Admin</button>
+    <button class="btn btn-sm btn-outline-secondary" onclick="setRole(${u.id},'user')">User</button></td></tr>`;
+  });
+}
+async function setRole(id,role){
+  const r=await fetch(`/api/admin/users/${id}/role`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({role}),credentials:"include"});
+  const j=await r.json(); if(!j.success) return Swal.fire("Error",j.error,"error");
+  Swal.fire("Sukses","Role updated","success"); loadUsers();
+}
+document.addEventListener("DOMContentLoaded",()=>{loadStats();loadUsers();setInterval(loadStats,10000);});
+</script>
