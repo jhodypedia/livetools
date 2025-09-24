@@ -1,0 +1,49 @@
+<h4>➕ New Live</h4>
+<form id="formSchedule" enctype="multipart/form-data" class="card p-3">
+  <div class="row g-3">
+    <div class="col-md-6"><label>Judul</label><input class="form-control" name="title" required></div>
+    <div class="col-md-6"><label>Platform</label>
+      <select class="form-control" name="platform">
+        <option value="youtube">YouTube</option>
+        <option value="twitch">Twitch</option>
+        <option value="tiktok">TikTok</option>
+        <option value="instagram">Instagram</option>
+      </select>
+    </div>
+    <div class="col-md-6"><label>Stream Key</label><input class="form-control" name="streamKey" required></div>
+    <div class="col-md-6"><label>Mode</label>
+      <select name="mode" class="form-control"><option value="now">Live Sekarang</option><option value="schedule" selected>Jadwal</option></select>
+    </div>
+    <div class="col-md-6"><label>Tanggal & Jam (WIB)</label><input type="datetime-local" class="form-control" name="startAt"></div>
+    <div class="col-md-6"><label>Loop?</label><select class="form-control" name="loop"><option value="false">No</option><option value="true">Yes</option></select></div>
+    <div class="col-12"><label>File Video</label><input type="file" name="sourceFile" class="form-control" accept="video/*" id="fileInput"></div>
+    <div class="col-12"><video id="preview" controls style="display:none;width:100%;border-radius:12px;margin-top:8px;"></video></div>
+    <div class="col-12" id="progressWrap" style="display:none"><progress id="progressBar" max="100" value="0" style="width:100%"></progress></div>
+  </div>
+  <div class="mt-3"><button class="btn btn-primary">Simpan</button></div>
+</form>
+
+<script>
+const form=document.getElementById("formSchedule");
+const fileInput=document.getElementById("fileInput");
+const preview=document.getElementById("preview");
+const progressWrap=document.getElementById("progressWrap");
+const progressBar=document.getElementById("progressBar");
+
+fileInput?.addEventListener("change",e=>{
+  const f=e.target.files[0]; if(f){preview.src=URL.createObjectURL(f);preview.style.display="block";} else preview.style.display="none";
+});
+
+form.addEventListener("submit",e=>{
+  e.preventDefault();
+  const fd=new FormData(form);
+  fd.append("timezone",Intl.DateTimeFormat().resolvedOptions().timeZone||"Asia/Jakarta");
+  fd.append("clientTimeISO",new Date().toISOString());
+  const xhr=new XMLHttpRequest(); xhr.open("POST","/api/schedules",true); xhr.withCredentials=true;
+  progressWrap.style.display="block";
+  xhr.upload.onprogress=ev=>{if(ev.lengthComputable) progressBar.value=Math.round((ev.loaded/ev.total)*100)};
+  xhr.onload=()=>{progressWrap.style.display="none";try{const j=JSON.parse(xhr.responseText);if(!j.success) throw j.error;Swal.fire("Sukses",j.message,"success");form.reset();preview.style.display="none";}catch(err){Swal.fire("Error",err,"error");}};
+  xhr.onerror=()=>{progressWrap.style.display="none";Swal.fire("Error","Network error","error");};
+  xhr.send(fd);
+});
+</script>
