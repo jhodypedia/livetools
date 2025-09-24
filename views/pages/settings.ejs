@@ -1,0 +1,37 @@
+<h4>⚙️ Settings</h4>
+<div class="row g-3">
+  <div class="col-lg-6">
+    <div class="card p-3">
+      <h6>Profile</h6>
+      <form id="formProfile">
+        <div class="mb-2"><label>Nama</label><input class="form-control" name="name" value="<%= me.name %>"></div>
+        <div class="mb-2"><label>Email</label><input class="form-control" name="email" value="<%= me.email %>"></div>
+        <button class="btn btn-primary">Simpan</button>
+      </form>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="card p-3">
+      <h6>Ganti Password</h6>
+      <form id="formPassword">
+        <div class="mb-2"><input type="password" name="oldPassword" class="form-control" placeholder="Password lama"></div>
+        <div class="mb-2"><input type="password" name="newPassword" class="form-control" placeholder="Password baru"></div>
+        <button class="btn btn-warning">Ganti</button>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+document.getElementById("formProfile").addEventListener("submit",async e=>{
+  e.preventDefault();const payload=Object.fromEntries(new FormData(e.target).entries());
+  const r=await fetch("/api/auth/profile",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload),credentials:"include"});
+  const j=await r.json(); if(!j.success) return Swal.fire("Error",j.error,"error");
+  Swal.fire("Sukses","Profil diperbarui","success");
+});
+document.getElementById("formPassword").addEventListener("submit",async e=>{
+  e.preventDefault();const payload=Object.fromEntries(new FormData(e.target).entries());
+  const r=await fetch("/api/auth/password",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload),credentials:"include"});
+  const j=await r.json(); if(!j.success) return Swal.fire("Error",j.error,"error");
+  Swal.fire("Sukses","Password diubah","success"); e.target.reset();
+});
+</script>
