@@ -1,0 +1,36 @@
+<div class="row justify-content-center">
+  <div class="col-lg-5">
+    <div class="card p-4">
+      <h5 class="mb-3">Masuk</h5>
+      <form id="formLogin">
+        <div class="mb-3"><label>Email</label><input class="form-control" name="email" type="email" required></div>
+        <div class="mb-3"><label>Password</label><input class="form-control" name="password" type="password" required></div>
+        <button class="btn btn-primary w-100">Login</button>
+      </form>
+      <hr>
+      <h6>Daftar</h6>
+      <form id="formRegister">
+        <div class="mb-2"><input class="form-control" name="name" placeholder="Nama" required></div>
+        <div class="mb-2"><input class="form-control" name="email" placeholder="Email" required></div>
+        <div class="mb-2"><input class="form-control" name="password" placeholder="Password" type="password" required></div>
+        <button class="btn btn-outline-primary w-100">Register</button>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+document.getElementById("formLogin").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const payload=Object.fromEntries(new FormData(e.target).entries());
+  const r=await fetch("/api/auth/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+  const j=await r.json(); if(!j.success) return Swal.fire("Error",j.error,"error");
+  Swal.fire("Sukses","Login berhasil","success").then(()=>location.href="/dashboard");
+});
+document.getElementById("formRegister").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const payload=Object.fromEntries(new FormData(e.target).entries());
+  const r=await fetch("/api/auth/register",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)});
+  const j=await r.json(); if(!j.success) return Swal.fire("Error",j.error,"error");
+  Swal.fire("Sukses","Register berhasil","success").then(()=>location.href="/dashboard");
+});
+</script>
