@@ -1,0 +1,11 @@
+<h4>💻 System Info</h4>
+<div class="card p-3">
+  <pre id="sysinfo"></pre>
+</div>
+<script>
+async function loadSys(){
+  const r=await fetch("/api/admin/system",{credentials:"include"}); const j=await r.json();
+  if(j.success){ sysinfo.textContent=JSON.stringify(j.data,null,2); }
+}
+document.addEventListener("DOMContentLoaded",loadSys);
+</script>
