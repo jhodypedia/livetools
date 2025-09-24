@@ -1,0 +1,24 @@
+# =============================
+# APP CONFIG
+# =============================
+PORT=3000
+SESSION_SECRET=your_super_secret_session_key
+
+# =============================
+# DATABASE CONFIG
+# =============================
+DB_HOST=localhost
+DB_USER=autolive_user
+DB_PASS=autolive_pass
+DB_NAME=autolive_db
+
+# =============================
+# TIMEZONE
+# =============================
+TZ=Asia/Jakarta
+
+# =============================
+# FFmpeg (pastikan sudah terinstall di VPS)
+# Path default: /usr/bin/ffmpeg
+# =============================
+FFMPEG_PATH=/usr/bin/ffmpeg
