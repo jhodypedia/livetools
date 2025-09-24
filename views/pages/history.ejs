@@ -1,0 +1,17 @@
+<h4>📜 History</h4>
+<div class="card p-3">
+  <div class="table-responsive">
+    <table class="table" id="tblHistory">
+      <thead><tr><th>Judul</th><th>Platform</th><th>Status</th><th>Mulai</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+</div>
+<script>
+async function loadHistory(){
+  const r=await fetch("/api/schedules?history=1",{credentials:"include"}); const j=await r.json();
+  if(j.success){ const tbody=document.querySelector("#tblHistory tbody"); tbody.innerHTML="";
+    j.data.forEach(d=> tbody.innerHTML+=`<tr><td>${d.title}</td><td>${d.platform}</td><td>${d.status}</td><td>${d.startAt?new Date(d.startAt).toLocaleString():"-"}</td></tr>`); }
+}
+document.addEventListener("DOMContentLoaded",loadHistory);
+</script>
